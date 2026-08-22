@@ -1,4 +1,4 @@
- @font-face {
+@font-face {
       font-family: 'Amoresa';
       src: url('fonts/Amoresa\ Aged.otf') format('truetype');
     }
@@ -245,6 +245,422 @@
     display:flex;
     align-items:center;
     justify-content:space-between;
+    gap:14px;
+    margin-top:16px;
+  }
+  .sprig{ width:46px; height:34px; opacity:0.55; }
+
+  /* Disclosure telling the writer where their message, photo, and name
+     are actually going, since Seal & Save uploads them to Drive rather
+     than only saving a local file. Sized small and muted so it reads as
+     fine print, not a warning, while still being genuinely legible
+     (never below 10px) all the way down to the smallest phone
+     breakpoint. */
+  .save-disclosure{
+    font-family:'Maragsa', sans-serif;
+    font-size:10.5px;
+    line-height:1.35;
+    color:var(--ink-soft);
+    max-width:23ch;
+  }
+ 
+  .seal-btn{
+    font-family:'Maragsa', sans-serif;
+    font-size:11.5px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--paper);
+    background:var(--sage-deep);
+    border:none;
+    padding:12px 22px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:transform .2s ease, background .3s ease;
+    flex-shrink:0;
+    white-space:nowrap;
+  }
+  .seal-btn:hover{ transform:translateY(-1px); background:var(--gold); }
+  .seal-btn:active{ transform:translateY(0); }
+  .seal-btn:focus-visible{ outline:2px solid var(--gold); outline-offset:3px; }
+  .seal-btn:disabled{ cursor:default; opacity:0.85; }
+
+  /* ------------------------------------------------------------------
+     Responsive breakpoints, largest screen to smallest. Each step only
+     overrides what actually needs to shrink at that width; everything
+     not mentioned keeps the value from the step above. Kept as a single
+     descending staircase (600 → 430 → 380 → 340) instead of scattered,
+     overlapping queries so it's obvious at a glance which devices land
+     in which band and nothing fights the step below it.
+     --------------------------------------------------------------- */
+
+  /* Small tablets / large phones in landscape. At these widths .paper's
+     own width:min(440px, 90vw) already caps it comfortably, so this
+     step only has to loosen the footer, which otherwise reads as
+     slightly cramped once the disclosure text and button sit side by
+     side above ~600px of available width. */
+  @media (max-width:600px){
+    .paper-footer{ gap:16px; }
+  }
+
+  /* Mid-range phones — most current iPhones (14/15/16 standard & Plus/
+     Pro Max at their CSS width) and common Android widths fall in this
+     band. Slightly tightens padding and the photo module without going
+     as far as the sub-380px rules below, which target smaller/older
+     devices (iPhone SE, compact Android). */
+  @media (max-width:430px){
+    .paper{ padding:28px 24px 20px; }
+    .photo-upload{ width:128px; height:104px; }
+    .photo-circle{ width:100px; height:78px; top:14px; left:14px; }
+    .letter{ font-size:18px; }
+    :root{ --line-h:29px; }
+    .thanks-text{ font-size:clamp(22px, 6vw, 32px); }
+    .paper-footer{ gap:12px; }
+    .save-disclosure{ font-size:10px; max-width:20ch; }
+    .seal-btn{ padding:11px 18px; font-size:11px; }
+  }
+
+  @media (max-width:380px){
+    .paper{ padding:24px 22px 18px; }
+    .photo-upload{ width:116px; height:94px; }
+    .photo-circle{ width:90px; height:68px; top:13px; left:13px; }
+    .letter{ font-size:16.5px; }
+    :root{ --line-h:26px; }
+    .thanks-text{ font-size:clamp(20px, 6.5vw, 28px); }
+    .thanks-overlay{ padding:32px 16px; }
+  }
+
+  /* Narrowest phones (iPhone SE portrait and similar ~320–340px CSS
+     widths). At this point the footer no longer has room to keep the
+     disclosure and button on one row without either truncating the
+     text or squeezing the button below a comfortable tap target, so it
+     stacks: disclosure on top, full-width button below. Text stays
+     left-aligned to match the rest of the letter rather than centering,
+     which would look inconsistent with everything above it. */
+  @media (max-width:340px){
+    .paper{ padding:20px 18px 16px; }
+    .paper-footer{
+      flex-direction:column;
+      align-items:stretch;
+      gap:10px;
+    }
+    .save-disclosure{ max-width:none; }
+    .seal-btn{ width:100%; }
+  }
+
+  /* The paper lifts away on save, mirroring its own entrance "settle"
+     animation in reverse, as the full-screen reply takes its place. */
+  .paper.leaving{
+    pointer-events:none;
+    transition:opacity .5s ease, transform .5s cubic-bezier(.22,.61,.36,1);
+    opacity:0;
+    transform:translateY(-14px) rotate(-1.4deg) scale(.97);
+  }
+
+  /* Full-screen closing message — same paper tone, grain, and script
+     face as the letter itself, so it reads as the letter answering
+     back rather than a dialog stacked on top of it. */
+  .thanks-overlay{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:48px 20px;
+    background:var(--paper);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .35s ease;
+    z-index:10;
+    cursor:pointer;
+  }
+  .thanks-overlay::before{
+    content:'';
+    position:absolute; inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity:0.06;
+    mix-blend-mode:multiply;
+    pointer-events:none;
+  }
+  .thanks-overlay.visible{
+    opacity:1;
+    pointer-events:auto;
+  }
+  .thanks-copy{
+    position:relative;
+    z-index:1;
+    text-align:center;
+    max-width:480px;
+    transform:translateY(14px);
+    transition:transform .35s cubic-bezier(.22,.61,.36,1);
+  }
+  .thanks-overlay.visible .thanks-copy{
+    transform:translateY(0);
+  }
+  .thanks-text{
+    margin:0;
+    font-family:'Amoresa', serif;
+    font-size:clamp(26px, 5vw, 38px);
+    line-height:1.4;
+    color:var(--ink);
+  }
+ 
+  @media (prefers-reduced-motion:reduce){
+    .paper{ animation:none; opacity:1; transform:rotate(-0.6deg); }
+    .photo-circle, .seal-btn{ transition:none; }
+    .paper.leaving{ transition:opacity .25s ease; transform:none; }
+    .thanks-overlay{ transition:opacity .25s ease; }
+    .thanks-copy{ transition:none; transform:none; }
+  }
+
+
+
+/*@font-face {
+      font-family: 'Amoresa';
+      src: url('fonts/Amoresa\ Aged.otf') format('truetype');
+    }
+    @font-face {
+    font-family: 'Maragsa';
+    src: url('fonts/MaragsaDisplay.otf') format('truetype');
+}
+:root{
+    --paper:#F5F0E3;
+    --ink:#3B362E;
+    --ink-soft:#55503F;
+    --sage:#6E7C58;
+    --sage-deep:#485139;
+    --gold:#A9834F;
+    --blush:#C98A7D;
+    --backdrop-a:#E7E1D0;
+    --backdrop-b:#CFC7AF;
+    --line-h:32px;
+  }
+ 
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; }
+  
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:48px 20px;
+    background:radial-gradient(circle at 50% 32%, var(--backdrop-a), var(--backdrop-b));
+    font-family:'Maragsa', sans-serif;
+    color:var(--ink);
+  }
+ 
+  .paper{
+    position:relative;
+    width:min(440px, 90vw);
+    min-height:min(640px, 85vh);
+    background:var(--paper);
+    border-radius:3px;
+    padding:34px 34px 26px;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    box-shadow:
+      0 2px 4px rgba(59,54,46,0.14),
+      0 20px 40px -14px rgba(59,54,46,0.38),
+      0 46px 60px -34px rgba(59,54,46,0.28);
+    animation:settle .8s cubic-bezier(.22,.61,.36,1) both;
+  }
+  @keyframes settle{
+    from{ opacity:0; transform:translateY(16px) rotate(-3deg); }
+    to{ opacity:1; transform:translateY(0) rotate(-0.6deg); }
+  }
+ 
+  .paper::before{
+    content:'';
+    position:absolute; inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity:0.06;
+    mix-blend-mode:multiply;
+    pointer-events:none;
+  }
+
+  .paper.exporting::before {
+    display: none;
+  }
+
+  /* Belt-and-suspenders: hide the footer entirely during export so the
+     Seal & Save button (and its flex gap) can never appear in the PNG,
+     even if ignoreElements is skipped for any reason. */
+/*  .paper.exporting .paper-footer {
+    display: none;
+  }
+ 
+  .paper-header, .lines-bg, .paper-footer{ position:relative; z-index:1; }
+ 
+  .paper-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+  }
+ 
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    padding-top:14px;
+  }
+ 
+  .photo-upload{
+    position:relative;
+    width:144px;
+    height:116px;
+    flex-shrink:0;
+    margin:-16px -14px 0 0;
+  }
+  
+  .photo-circle{
+    position:absolute;
+    top:16px; 
+    left:16px;
+    width:112px; 
+    height:110px;
+    border-radius:6px;
+    background:#EEE8D8;
+    border:1.5px solid var(--gold);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .photo-circle:hover{ transform:scale(1.035); box-shadow:0 8px 18px rgba(169,131,79,0.32); }
+  .photo-circle:focus-visible{ outline:2px solid var(--gold); outline-offset:4px; }
+  .photo-circle .plus{ width:24px; height:24px; stroke:var(--gold); stroke-width:1.4; fill:none; }
+  .photo-circle img{ width:100%; height:100%; object-fit:cover; display:none; }
+  .photo-circle.has-photo img{ display:block; }
+  .photo-circle.has-photo .plus{ display:none; }
+ 
+  .photo-hint{
+    position:absolute;
+    bottom:-19px; left:50%;
+    transform:translateX(-50%);
+    font-size:9.5px;
+    letter-spacing:.09em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    white-space:nowrap;
+    transition:opacity .2s ease;
+  }
+  .photo-upload.has-photo .photo-hint{ opacity:0; }
+ 
+  .remove-photo{
+    position:absolute;
+    top:6px; right:6px;
+    width:22px; height:22px;
+    border-radius:50%;
+    background:rgba(59,54,46,0.68);
+    color:#fff;
+    border:none;
+    font-size:13px;
+    line-height:1;
+    cursor:pointer;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:2;
+  }
+  .photo-upload.has-photo:hover .remove-photo,
+  .photo-upload.has-photo:focus-within .remove-photo{ display:flex; }
+ 
+  .lines-bg{
+    margin-top:20px;
+    padding:6px 4px 0;
+    background-image:repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(var(--line-h) - 1px),
+      rgba(59,54,46,0.14) calc(var(--line-h) - 1px),
+      rgba(59,54,46,0.14) var(--line-h)
+    );
+    transition:background-image .3s ease;
+  }
+  .lines-bg:focus-within{
+    background-image:repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(var(--line-h) - 1px),
+      rgba(169,131,79,0.4) calc(var(--line-h) - 1px),
+      rgba(169,131,79,0.4) var(--line-h)
+    );
+  }
+ 
+  .letter{
+    font-family:'Amoresa', serif;
+    font-size:20px;
+    line-height:var(--line-h);
+    color:var(--ink);
+  }
+  .letter p{ margin:0; }
+
+  /* All four regions are independently editable, each capped to its own
+     line budget in JS (1 line for these three, 9 for the body) so none
+     of them can invade, delete, or push around the others. */
+/*  .greeting,
+  .letter-body,
+  .signoff,
+  .writer-name{
+    outline:none;
+    cursor:text;
+  }
+
+  /* Hard line cap for the body specifically — must match MAX_LINES in JS.
+     overflow:hidden alone isn't reliable inside html2canvas exports (a
+     confirmed, long-standing html2canvas limitation: content correctly
+     clipped in the live page can still render in full in the captured
+     PNG). The real export-time safeguard is truncateToLineLimit() in the
+     script below, which runs on html2canvas's clone and physically
+     removes overflow content rather than relying on CSS clipping.
+     word-break/overflow-wrap force long unbroken character runs (no
+     spaces — common with some mobile keyboards/IMEs) to wrap instead of
+     overflowing the box width.
+     NOTE: contain:layout size was tried here previously as an extra
+     safeguard, but was reverted — without an explicit
+     contain-intrinsic-size, size containment can make the browser treat
+     the element as having no content when computing layout, which broke
+     the JS line-counting (getClientRects) used by the typing guard and
+     blocked typing entirely. Do not reintroduce contain here without
+     also verifying lineCountOf() in the script still measures correctly
+     against real typed content. */
+/*  .letter-body{
+    max-height:calc(var(--line-h) * 9);
+    overflow:hidden;
+    word-break:break-word;
+    overflow-wrap:break-word;
+  }
+
+  /* margin-top of one full line-height leaves exactly one blank ruled
+     line visible between the body and the sign-off, matching the
+     reference design, without relying on a typed blank line a user
+     could edit away. */
+/*  .signoff{
+    margin-top:var(--line-h) !important;
+  }
+
+  /* Empty by default — show a faint placeholder until the writer types
+     their name. The .is-empty class is toggled by JS (checked on load
+     and on every input), not by :empty, since the field always keeps a
+     <br> inside it while blank so it stays clickable. */
+/*  .writer-name.is-empty br{
+    display:none;
+  }
+  .writer-name.is-empty::before{
+    content:attr(data-placeholder);
+    color:var(--ink-soft);
+    opacity:0.5;
+  }
+ 
+  .paper-footer{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
     margin-top:16px;
   }
   .sprig{ width:46px; height:34px; opacity:0.55; }
@@ -272,7 +688,7 @@
      band. Slightly tightens padding and the photo module without going
      as far as the sub-380px rules below, which target smaller/older
      devices (iPhone SE, compact Android). */
-  @media (max-width:430px){
+/*  @media (max-width:430px){
     .paper{ padding:28px 24px 20px; }
     .photo-upload{ width:128px; height:104px; }
     .photo-circle{ width:100px; height:78px; top:14px; left:14px; }
@@ -293,7 +709,7 @@
 
   /* The paper lifts away on save, mirroring its own entrance "settle"
      animation in reverse, as the full-screen reply takes its place. */
-  .paper.leaving{
+ /* .paper.leaving{
     pointer-events:none;
     transition:opacity .5s ease, transform .5s cubic-bezier(.22,.61,.36,1);
     opacity:0;
@@ -303,7 +719,7 @@
   /* Full-screen closing message — same paper tone, grain, and script
      face as the letter itself, so it reads as the letter answering
      back rather than a dialog stacked on top of it. */
-  .thanks-overlay{
+/*  .thanks-overlay{
     position:fixed;
     inset:0;
     display:flex;
@@ -548,7 +964,7 @@
   /* All four regions are independently editable, each capped to its own
      line budget in JS (1 line for these three, 9 for the body) so none
      of them can invade, delete, or push around the others. */
-  .greeting,
+/*  .greeting,
   .letter-body,
   .signoff,
   .writer-name{
@@ -558,7 +974,7 @@
 
   /* Hard line cap for the body specifically — must match MAX_LINES in JS.
      Overflow is physically impossible here even if JS ever failed. */
-  .letter-body{
+/*  .letter-body{
     max-height:calc(var(--line-h) * 9);
     overflow:hidden;
   }
@@ -567,7 +983,7 @@
      line visible between the body and the sign-off, matching the
      reference design, without relying on a typed blank line a user
      could edit away. */
-  .signoff{
+/*  .signoff{
     margin-top:var(--line-h) !important;
   }
 
@@ -575,7 +991,7 @@
      their name. The .is-empty class is toggled by JS (checked on load
      and on every input), not by :empty, since the field always keeps a
      <br> inside it while blank so it stays clickable. */
-  .writer-name.is-empty br{
+/*  .writer-name.is-empty br{
     display:none;
   }
   .writer-name.is-empty::before{
@@ -618,7 +1034,7 @@
 
   /* The paper lifts away on save, mirroring its own entrance "settle"
      animation in reverse, as the full-screen reply takes its place. */
-  .paper.leaving{
+/*  .paper.leaving{
     pointer-events:none;
     transition:opacity .5s ease, transform .5s cubic-bezier(.22,.61,.36,1);
     opacity:0;
@@ -628,7 +1044,7 @@
   /* Full-screen closing message — same paper tone, grain, and script
      face as the letter itself, so it reads as the letter answering
      back rather than a dialog stacked on top of it. */
-  .thanks-overlay{
+/*  .thanks-overlay{
     position:fixed;
     inset:0;
     display:flex;
@@ -680,4 +1096,4 @@
     .paper.leaving{ transition:opacity .25s ease; transform:none; }
     .thanks-overlay{ transition:opacity .25s ease; }
     .thanks-copy{ transition:none; transform:none; }
-  }
+  }*/
