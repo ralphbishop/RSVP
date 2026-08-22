@@ -181,14 +181,14 @@
     font-size:20px;
     line-height:var(--line-h);
     color:var(--ink);
-    /* Small headroom so ascenders/uppercase on the very first line have
-       room to render fully. Without this, the first line sits flush
-       against the top of the block with no buffer, so it can look
-       clipped or appear to shift once a second line is added below and
-       the block's own line-box metrics settle. Padding only — doesn't
-       touch line-height/--line-h, which the JS line-counter and the
-       ruled-line background both depend on. */
-    padding-top:4px;
+    /* Headroom so ascenders/uppercase swashes on the very first line have
+       room to render fully. Amoresa is a script face with tall capital
+       swashes (e.g. the "D" in "Dear"), so without this the first line
+       sits flush against the top of the block with no buffer and its
+       cap can look clipped. Padding only — doesn't touch line-height/
+       --line-h, which the JS line-counter and the ruled-line background
+       both depend on. */
+    padding-top:10px;
   }
   .letter p{ margin:0; }
 
@@ -419,7 +419,6 @@
     .thanks-overlay{ transition:opacity .25s ease; }
     .thanks-copy{ transition:none; transform:none; }
   }
-
 
 /*@font-face {
       font-family: 'Amoresa';
