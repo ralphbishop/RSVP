@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>RSVP</title>
+</head>
+<body>
+    
+  <div class="stage" id="stage">
+    <div class="letter">
+      <div class="letter-text">
+        <div id="rsvpStep1">
+          <svg class="letter-blossom" width="24" height="24" viewBox="-10 -10 20 20" aria-hidden="true"><use href="#blossom"/></svg>
+          <p class="greeting">RSVP</p>
+          <span class="rule"></span>
+          <p class="message">Will you be there to celebrate with us?</p>
+          <div class="rsvp" id="rsvp">
+            <button class="rsvp-btn yes" id="btnYes" type="button">Yes, I'll be there</button>
+            <button class="rsvp-btn no" id="btnNo" type="button">Can't make it</button>
+          </div>
+        </div>
+ 
+        <div id="rsvpStep2" hidden>
+          <p class="greeting">Just a few details</p>
+          <span class="rule"></span>
+          <input type="text" class="guest-input" id="guestFullName" placeholder="Full name" autocomplete="name" />
+          <input type="email" class="guest-input" id="guestEmail" placeholder="Active Email address" autocomplete="email" />
+          <div class="rsvp">
+            <button class="rsvp-btn yes" id="btnConfirm" type="button">Confirm RSVP</button>
+          </div>
+        </div>
+ 
+        <p class="rsvp-response" id="rsvpResponse" hidden></p>
+        <div class="rsvp" id="rsvpMessageAction" hidden>
+          <a class="rsvp-btn yes" id="btnLeaveMessage" href="message.html">Leave a message</a>
+        </div>  
+      </div>
+    </div>
+ 
+    <div class="envelope" id="envelope">
+      <div class="env-back"></div>
+      <div class="env-pocket-bottom"></div>
+      <div class="env-pocket-left"></div>
+      <div class="env-pocket-right"></div>
+ 
+      <svg class="corner-sprig left" viewBox="0 0 60 100" aria-hidden="true"><use href="#sprig"/></svg>
+      <svg class="corner-sprig right" viewBox="0 0 60 100" aria-hidden="true"><use href="#sprig"/></svg>
+ 
+      <div class="address">
+        <p class="to-line">You're invited</p>
+        <p class="name">Turning eighteen</p>
+        <p class="addr">Please join the celebration</p>
+      </div>
+ 
+      <div class="floral-seal">
+        <svg width="26" height="26" viewBox="-10 -10 20 20" aria-hidden="true"><use href="#blossom"/></svg>
+        <span class="seal-num">18</span>
+      </div>
+ 
+      <div class="env-flap-wrap" id="flapWrap">
+        <div class="env-flap"></div>
+      </div>
+    </div>
+ 
+    <div class="hint">Click to open your invitation</div>
+  </div>
+
+<script>
+  const stage = document.getElementById('stage');
+  const envelope = document.getElementById('envelope');
+ 
+  let opened = false;
+ 
+  envelope.addEventListener('click', () => {
+    if (opened) return;
+    opened = true;
+    stage.classList.add('open');
+  });
+ 
+  const rsvpStep1 = document.getElementById('rsvpStep1');
+  const rsvpStep2 = document.getElementById('rsvpStep2');
+  const rsvpResponse = document.getElementById('rsvpResponse');
+  const rsvpMessageAction = document.getElementById('rsvpMessageAction');
+  const btnYes = document.getElementById('btnYes');
+  const btnNo = document.getElementById('btnNo');
+  const btnConfirm = document.getElementById('btnConfirm');
+  const guestFullName = document.getElementById('guestFullName');
+  const guestEmail = document.getElementById('guestEmail');
+ 
+  // Paste the Web app URL from your Google Apps Script deployment here.
+  const SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyJVbEnwjMfk2CQs4Hc26FqHFXzKFXXa139kXZG4N47mcHGlXzkZQSI_qQ-8j9hGp6V/exec";
+ 
+  function logRSVP(answer) {
+  if (!SHEET_WEBHOOK_URL || SHEET_WEBHOOK_URL.indexOf('PASTE_YOUR') === 0) return;
+  const payload = {
+    name: (guestFullName.value || '').trim() || 'Guest',
+    email: (guestEmail.value || '').trim(),
+    response: answer,
+    timestamp: new Date().toISOString()
+  };
+  fetch(SHEET_WEBHOOK_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(payload)
+  }).catch(function () { /* fail silently, don't block the RSVP UI */ });
+}
+ 
+  function finish(text, showMessageBtn) {
+    rsvpStep1.hidden = true;
+    rsvpStep2.hidden = true;
+    rsvpResponse.textContent = text;
+    rsvpResponse.hidden = false;
+    rsvpMessageAction.hidden = !showMessageBtn;
+  
+  }
+ 
+  btnYes.addEventListener('click', () => {
+    rsvpStep1.hidden = true;
+    rsvpStep2.hidden = false;
+  });
+ 
+  btnConfirm.addEventListener('click', () => {
+    logRSVP("Yes, I'll be there");
+    finish("Wonderful \u2014 see you there!");
+  });
+ 
+  btnNo.addEventListener('click', () => {
+    logRSVP("Can't make it");
+    finish("We'll miss you \u2014 thanks for letting us know.", true);
+  });
+ 
+  envelope.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      envelope.click();
+    }
+  });
+ 
+  envelope.setAttribute('tabindex', '0');
+  envelope.setAttribute('role', 'button');
+  envelope.setAttribute('aria-label', 'Open envelope');
+</script>
+ 
+</body>
+</html>

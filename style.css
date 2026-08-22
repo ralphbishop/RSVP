@@ -1,0 +1,414 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond: ital,wght@0,400;0,500;0,600;1,400;1,600&family=Jost:wght@400;500;600&display=swap');
+ @font-face {
+      font-family: 'Amoresa';
+      src: url('fonts/Amoresa\ Aged.otf') format('truetype');
+    }
+    @font-face {
+    font-family: 'Maragsa';
+    src: url('fonts/MaragsaDisplay.otf') format('truetype');
+}
+:root {
+    --border-img: url('image/back.jpg');
+    --paper: #fbf6ef;
+    --envelope: #f4a6c6;
+    --envelope-shade: #ea8bb3;
+    --envelope-shadow: #de6f9c;
+    --ink: #241d1f;
+    --ink-soft: #7c5f68;
+    --line: #cbb0b6;
+    --sage: #9c5468;
+    --sage-deep: #9c5468;
+    --gold: #9c5468;
+    --rose: #9c5468;
+    --rose-deep: #9c5468;
+}
+
+* { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+ 
+body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffb6c1;
+    font-family: 'Amoresa', serif;
+    overflow: hidden;
+    padding: 20px;
+}  
+
+svg.defs-only { 
+    position: absolute; 
+    width: 0; 
+    height: 0; 
+    overflow: hidden; 
+}
+
+.stage {
+    position: relative;
+    width: 440px;
+    max-width: 92vw;
+    height: 300px;
+    perspective: 1800px;
+}
+
+.hint {
+  position: absolute;
+  bottom: -46px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: var(--paper);
+  font-family: 'Jost', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity:0.7;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.stage.open .hint {
+  opacity: 0;
+}
+
+.letter {
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  width: 92%;
+  max-width: 400px;
+  max-height: 92%;
+  overflow: hidden;
+  transform: translate(-50%, 0);
+  background-color: var(--paper);
+  border-radius: 2px; 
+  box-shadow: 0 18px 46px rgba(36, 29, 31, 0.24);
+  z-index: 2;
+  transition: transform 0.9s cubic-bezier(.2,.85,.32,1) 0.75s, z-index 0s 0.75s;
+  padding: 26px 30px;
+  display: flex;
+  align-items: center;
+}
+
+.letter-text {
+  width: 100%;
+}
+
+.letter::before {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(255, 215, 0, 1);
+  pointer-events: none;
+}
+
+.letter-text  .greeting {
+  font-family: 'Maragsa', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 6px;
+  text-align: center;
+}
+
+.letter-text .rule {
+  display: block;
+  width: 34px;
+  height: 1px;
+  margin: 0 auto 12px;
+  background: #FFD700;
+  opacity: 0.45;
+}
+
+.letter-text .message {
+  font-size: 20px;
+  line-height: 1.55;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  margin: 0 0 18px;
+  text-align: center;
+}
+
+.guest-input {
+  display:block;
+  width: 100%;
+  max-width: 220px;
+  margin: 0 auto 16px;
+  padding: 6px 2px;
+  font-family: 'Amoresa', sans-serif;
+  font-size: 14px;
+  text-align: center;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  outline: none;
+}
+
+.guest-input::placeholder {
+  color: var(--ink-soft);
+  opacity: 0.7;
+}
+
+.guest-input:focus {
+  border-color: var(--gold);
+}
+
+.rsvp {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.rsvp-btn {
+  font-family: 'Maragsa', sans-serif;
+  font-weight: 500;
+  font-size: 11.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-align: center;
+  flex: 1;
+  min-width: 0;
+  padding: 10px 10px;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.rsvp-btn:active {
+  transform: scale(0.96);
+}
+
+.rsvp-btn.yes {
+  border: 1px solid var(--rose-deep);
+  background: var(--rose-deep);
+  color: var(--paper);
+}
+
+.rsvp-btn.yes:hover {
+  background: #008000;
+  border-color: var(--ink);
+}
+
+.rsvp-btn.no {
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+}
+
+.rsvp-btn.no:hover {
+  background: #e0115f;
+  color: var(--paper);
+  border-color: var(--rose-deep);
+}
+
+.rsvp-response {
+  font-size: 19px;
+font-weight: 500;
+  color: var(--ink);
+  text-align: center;
+  margin: 0;
+}
+
+#rsvpMessageAction {
+  margin-top: 16px;
+  justify-content: center;
+}
+
+#rsvpMessageAction[hidden] {
+  display: none;
+}
+
+#rsvpMessageAction .rsvp-btn {
+  flex: none;
+  display: inline-block;
+  text-decoration: none;
+  padding: 10px 22px;
+}
+
+.stage.open .letter {
+  transform: translate(-50%, -112px);
+  z-index: 6;
+}
+
+.envelope {
+  position: absolute;
+  inset: 0;
+  z-index: 3; 
+  cursor: pointer;
+  transform-style: preserve-3d;
+}
+
+.env-back {
+  position: absolute;
+  left: 0; 
+  right: 0; 
+  bottom: 0;
+  height: 100%;
+  background-color: var(--envelope);
+  border-radius: 3px;
+  box-shadow: 0 22px 50px rgba(36,29,31,0.28);
+}
+
+.env-back::after {
+  content: "";
+  inset: 10px;
+  border-radius: 2px;
+  background: var(--envelope);
+  box-shadow: inset 0 0 0 2px rgba(211, 175, 55, 1);
+  position: absolute;
+}
+
+.env-pocket-left, .env-pocket-right, .env-pocket-bottom {
+  position: absolute;
+  inset: 5px;
+  z-index: 4;
+}
+
+.env-pocket-bottom {
+  background: var(--envelope-shadow);
+  clip-path: polygon(0% 100%, 100% 100%, 50% 40%);
+}
+
+.env-pocket-left {
+  background: var(--envelope-shade);
+  clip-path: polygon(0% 0%, 0% 100%, 50% 40%);
+}
+
+.env-pocket-right {
+  background: var(--envelope-shade);
+  clip-path: polygon(100% 0%, 100% 100%, 50% 40%);
+}
+
+.address {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  z-index: 6;
+  width: 74%;
+  text-align: center;
+  color: var(--ink);
+  line-height: 1;
+  pointer-events: none;
+}
+
+.address .to-line {
+  font-family: 'Maragsa', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0 0 15px;
+}
+
+ .address .name {
+  font-family: 'Amoresa', sans-serif;
+  font-size: 25px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #D3AF37;
+  margin: 0 0 4px;
+ }
+
+.address .addr {
+  font-family: 'Maragsa', sans-serif;
+  font-size: 18px;
+  color: var(--ink);
+  margin: 0;
+}
+
+.floral-seal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 3px solid #c9a24a;;
+  box-shadow: 0 0 0 3px var(--envelope-shade), 0 0 0 5px rgba(156,84,104,0.35);
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.5s cubic-bezier(.4,0,.2,1), opacity 0.5s ease 0.1s;
+}
+
+.seal-num {
+  font-family: 'Maragsa', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: #c9a24a;
+  margin-bottom: 15px;
+}
+
+.stage.open .floral-seal {
+  transform: translate(-50%, -50%) scale(0.5) rotate(-14deg);
+  opacity: 0;
+}
+
+.env-flap-wrap {
+  position: absolute;
+  top: 5px; left: 5px; right: 5px;
+  height: 60%;
+  transform-style: preserve-3d;
+  transform-origin: top center;
+  transition: transform 0.9s cubic-bezier(.6,.02,.2,1);
+  z-index: 7;   
+}
+
+.stage.open .env-flap-wrap {
+  transform: rotateX(176deg);
+  z-index: 1;
+}
+
+.env-back, .env-pocket-left, .env-pocket-right, .env-pocket-bottom {
+ transition: opacity 0.5s ease;
+}
+
+.env-flap {
+  position: absolute;
+  inset: 0;
+  background: var(--envelope);
+  clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+  box-shadow: inset 0 0 0 1px rgba(67,50,58,0.08);
+}
+
+.env-flap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+  background: linear-gradient(160deg, rgba(0,0,0,0) 60%, rgba(0,0,0,0.05) 100%);
+}
+
+.env-flap::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 14px;
+  width: 30px;
+  height: 30px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: var(--gold);
+  opacity: 0.16;
+}
+
+@media (max-width: 480px) {
+  .letter-text .message { font-size: 17px; margin-bottom: 12px; }
+  .letter { padding: 20px 24px; }
+  .rsvp { gap: 6px; }
+  .stage { height: 280px; }
+  .address .name { font-size: 21px; }
+  .address .addr { font-size: 14px; }
+}
