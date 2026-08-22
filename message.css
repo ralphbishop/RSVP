@@ -1,3 +1,4 @@
+
 @font-face {
       font-family: 'Amoresa';
       src: url('fonts/Amoresa\ Aged.otf') format('truetype');
@@ -156,7 +157,18 @@
  
   .lines-bg{
     margin-top:20px;
-    padding:6px 4px 0;
+    /* Top padding raised from 6px to 14px to give the first line's
+       ascenders/uppercase swashes (Amoresa is a script face with tall
+       capitals, e.g. the "D" in "Dear") room to render fully without
+       looking clipped. Added here rather than as padding on .letter,
+       because the ruled-line background is drawn from THIS element's
+       padding-box — padding on .letter would shift the text down
+       without shifting the lines behind it, throwing text and rules out
+       of alignment (confirmed by testing: that's what produced the
+       oversized gap between "Dear friend," and the body). Keeping the
+       offset here means the text and the lines it sits on move
+       together. */
+    padding:14px 4px 0;
     background-image:repeating-linear-gradient(
       to bottom,
       transparent 0,
@@ -181,14 +193,6 @@
     font-size:20px;
     line-height:var(--line-h);
     color:var(--ink);
-    /* Headroom so ascenders/uppercase swashes on the very first line have
-       room to render fully. Amoresa is a script face with tall capital
-       swashes (e.g. the "D" in "Dear"), so without this the first line
-       sits flush against the top of the block with no buffer and its
-       cap can look clipped. Padding only — doesn't touch line-height/
-       --line-h, which the JS line-counter and the ruled-line background
-       both depend on. */
-    padding-top:10px;
   }
   .letter p{ margin:0; }
 
