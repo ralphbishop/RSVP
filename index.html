@@ -31,6 +31,13 @@
             <button class="rsvp-btn yes" id="btnConfirm" type="button">Confirm RSVP</button>
           </div>
         </div>
+
+        <div id="rsvpStep3" hidden>
+          <p class="greeting">All set</p>
+          <span class="rule"></span>
+          <p class="message" id="rsvpSummary"></p>
+          <p class="fade-note">Always check your email for more updates</p>
+        </div>
  
         <p class="rsvp-response" id="rsvpResponse" hidden></p>
         <div class="rsvp" id="rsvpMessageAction" hidden>
@@ -81,6 +88,8 @@
  
   const rsvpStep1 = document.getElementById('rsvpStep1');
   const rsvpStep2 = document.getElementById('rsvpStep2');
+  const rsvpStep3 = document.getElementById('rsvpStep3');
+  const rsvpSummary = document.getElementById('rsvpSummary');
   const rsvpResponse = document.getElementById('rsvpResponse');
   const rsvpMessageAction = document.getElementById('rsvpMessageAction');
   const btnYes = document.getElementById('btnYes');
@@ -111,6 +120,7 @@
   function finish(text, showMessageBtn) {
     rsvpStep1.hidden = true;
     rsvpStep2.hidden = true;
+    rsvpStep3.hidden = true;
     rsvpResponse.textContent = text;
     rsvpResponse.hidden = false;
     rsvpMessageAction.hidden = !showMessageBtn;
@@ -123,8 +133,19 @@
   });
  
   btnConfirm.addEventListener('click', () => {
+    const name = (guestFullName.value || '').trim();
     logRSVP("Yes, I'll be there");
-    finish("Wonderful \u2014 see you there!");
+    rsvpStep2.hidden = true;
+    rsvpSummary.textContent = name
+      ? "Thanks, " + name + "! Wonderful \u2014 see you there!"
+      : "Thanks! Wonderful \u2014 see you there!";
+    rsvpStep3.hidden = false;
+    const fadeNote = rsvpStep3.querySelector('.fade-note');
+    if (fadeNote) {
+      fadeNote.style.animation = 'none';
+      void fadeNote.offsetWidth;
+      fadeNote.style.animation = '';
+    }
   });
  
   btnNo.addEventListener('click', () => {
