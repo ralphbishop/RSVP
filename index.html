@@ -1,169 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fil">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>RSVP</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aika | An Evening of Elegance</title>
+<link rel="stylesheet" href="invitation.css">
 </head>
-<body>
-    
-  <div class="stage" id="stage">
-    <div class="letter">
-      <div class="letter-text">
-        <div id="rsvpStep1">
-          <svg class="letter-blossom" width="24" height="24" viewBox="-10 -10 20 20" aria-hidden="true"><use href="#blossom"/></svg>
-          <p class="greeting">RSVP</p>
-          <span class="rule"></span>
-          <p class="message">Aika's 18th Birthday<br><span style="font-family: 'Maragsa', serif;">October 24, 2026</span>  <br>Will you be there to celebrate with us?</p>
-          <div class="rsvp" id="rsvp">
-            <button class="rsvp-btn yes" id="btnYes" type="button">Yes, I'll be there</button>
-            <button class="rsvp-btn no" id="btnNo" type="button">Can't make it</button>
-          </div>
-        </div>
- 
-        <div id="rsvpStep2" hidden>
-          <p class="greeting">Just a few details</p>
-          <span class="rule"></span>
-          <input type="text" class="guest-input" id="guestFullName" placeholder="Full name" autocomplete="name" />
-          <input type="email" class="guest-input" id="guestEmail" placeholder="Active Email address" autocomplete="email" />
-          <div class="rsvp">
-            <button class="rsvp-btn yes" id="btnConfirm" type="button">Confirm RSVP</button>
-          </div>
-        </div>
+<body class="is-loading">
 
-        <div id="rsvpStep3" hidden>
-          <p class="greeting">All set</p>
-          <span class="rule"></span>
-          <p class="message" id="rsvpSummary"></p>
-          <p class="fade-note">Always check your email for more updates</p>
-        </div>
- 
-        <p class="rsvp-response" id="rsvpResponse" hidden></p>
-        <div class="rsvp" id="rsvpMessageAction" hidden>
-          <a class="rsvp-btn yes" id="btnLeaveMessage" href="message.html">Leave a message</a>
-        </div>  
-      </div>
-    </div>
- 
-    <div class="envelope" id="envelope">
-      <div class="env-back"></div>
-      <div class="env-pocket-bottom"></div>
-      <div class="env-pocket-left"></div>
-      <div class="env-pocket-right"></div>
- 
-      <svg class="corner-sprig left" viewBox="0 0 60 100" aria-hidden="true"><use href="#sprig"/></svg>
-      <svg class="corner-sprig right" viewBox="0 0 60 100" aria-hidden="true"><use href="#sprig"/></svg>
- 
-      <div class="address">
-        <p class="to-line">You're invited</p>
-        <p class="name">Turning eighteen</p>
-        <p class="addr">Please join the celebration</p>
-      </div>
- 
-      <div class="floral-seal">
-        <svg width="26" height="26" viewBox="-10 -10 20 20" aria-hidden="true"><use href="#blossom"/></svg>
-        <span class="seal-num">18</span>
-      </div>
- 
-      <div class="env-flap-wrap" id="flapWrap">
-        <div class="env-flap"></div>
-      </div>
-    </div>
- 
-    <div class="hint">Click to open your invitation</div>
+<!-- Floral SVG sprite sheet, reused across sections -->
+<svg width="0" height="0" style="position:absolute">
+  <defs id="floral-defs"></defs>
+</svg>
+
+<!-- ambient floral corners, fixed, fade based on scroll -->
+<div class="floral-layer" aria-hidden="true">
+  <img class="floral floral--tl" src="images/floral-corner.svg" alt="">
+  <img class="floral floral--bl" src="images/floral-corner-2.svg" alt="">
+  <img class="floral floral--tr" src="images/floral-corner.svg" alt="">
+</div>
+
+<!-- ============ SECTION 1 : LANDING / COVER ============ -->
+<section id="landing" class="landing">
+  <div class="landing__inner">
+    <div class="landing__stack"></div>
   </div>
+</section>
 
-<script>
-  const stage = document.getElementById('stage');
-  const envelope = document.getElementById('envelope');
- 
-  let opened = false;
- 
-  envelope.addEventListener('click', () => {
-    if (opened) return;
-    opened = true;
-    stage.classList.add('open');
-  });
- 
-  const rsvpStep1 = document.getElementById('rsvpStep1');
-  const rsvpStep2 = document.getElementById('rsvpStep2');
-  const rsvpStep3 = document.getElementById('rsvpStep3');
-  const rsvpSummary = document.getElementById('rsvpSummary');
-  const rsvpResponse = document.getElementById('rsvpResponse');
-  const rsvpMessageAction = document.getElementById('rsvpMessageAction');
-  const btnYes = document.getElementById('btnYes');
-  const btnNo = document.getElementById('btnNo');
-  const btnConfirm = document.getElementById('btnConfirm');
-  const guestFullName = document.getElementById('guestFullName');
-  const guestEmail = document.getElementById('guestEmail');
- 
-  // Paste the Web app URL from your Google Apps Script deployment here.
-  const SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyJVbEnwjMfk2CQs4Hc26FqHFXzKFXXa139kXZG4N47mcHGlXzkZQSI_qQ-8j9hGp6V/exec";
- 
-  function logRSVP(answer) {
-  if (!SHEET_WEBHOOK_URL || SHEET_WEBHOOK_URL.indexOf('PASTE_YOUR') === 0) return;
-  const payload = {
-    name: (guestFullName.value || '').trim() || 'Guest',
-    email: (guestEmail.value || '').trim(),
-    response: answer,
-    timestamp: new Date().toISOString()
-  };
-  fetch(SHEET_WEBHOOK_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify(payload)
-  }).catch(function () { /* fail silently, don't block the RSVP UI */ });
-}
- 
-  function finish(text, showMessageBtn) {
-    rsvpStep1.hidden = true;
-    rsvpStep2.hidden = true;
-    rsvpStep3.hidden = true;
-    rsvpResponse.textContent = text;
-    rsvpResponse.hidden = false;
-    rsvpMessageAction.hidden = !showMessageBtn;
+<!-- ============ SPACER — controls scroll distance for the morph ============ -->
+<div id="morph-track" class="morph-track" aria-hidden="true"></div>
+
+<!-- ============ SECTION 2 : HOMEPAGE / INVITATION ============ -->
+<section id="home" class="home">
+  <div class="home__panel">
+
+    <p class="home__eyebrow">Dearest Family and Friends,</p>
+
+    <div class="home__body">
+      <p>
+        As I step into this new chapter of my life, I am filled with
+        gratitude for the people who have shaped my journey. Turning
+        eighteen is more than a milestone &mdash; it is a celebration of
+        growth, dreams, and the bonds that make life meaningful.
+      </p>
+      <p>
+        It would bring me great joy to have you by my side as we gather
+        for <em>An Evening of Elegance</em>, a night of laughter, memories,
+        and heartfelt moments. Your presence will make this occasion
+        truly unforgettable.
+      </p>
+    </div>
+
+    <!-- This is the LANDING SPOT for the morphing "Love, Aika" text -->
+    <div class="signature-slot" id="signature-slot" aria-hidden="true"></div>
+
+    <p class="home__event">An Evening of Elegance</p>
+
+    </div>
+
+    <div class="home__photo">
+      <div class="home__photo-frame">
+        <img src="images/aika-photo.png" alt="Litrato ni Aika" class="home__photo-img">
+      </div>
+
+    <div class="home__calendar-wrap">
+      <div class="calendar" aria-label="October 2026 calendar, event on the 24th">
+        <img src="images/calendar.png" alt="October 2026 calendar, event on the 24th">
+      </div>
+    </div>
+
+
   
-  }
- 
-  btnYes.addEventListener('click', () => {
-    rsvpStep1.hidden = true;
-    rsvpStep2.hidden = false;
-  });
- 
-  btnConfirm.addEventListener('click', () => {
-    const name = (guestFullName.value || '').trim();
-    logRSVP("Yes, I'll be there");
-    rsvpStep2.hidden = true;
-    rsvpSummary.textContent = name
-      ? "Thanks, " + name + "! Wonderful \u2014 see you there!"
-      : "Thanks! Wonderful \u2014 see you there!";
-    rsvpStep3.hidden = false;
-    const fadeNote = rsvpStep3.querySelector('.fade-note');
-    if (fadeNote) {
-      fadeNote.style.animation = 'none';
-      void fadeNote.offsetWidth;
-      fadeNote.style.animation = '';
-    }
-  });
- 
-  btnNo.addEventListener('click', () => {
-    logRSVP("Can't make it");
-    finish("We'll miss you \u2014 thanks for letting us know.", true);
-  });
- 
-  envelope.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      envelope.click();
-    }
-  });
- 
-  envelope.setAttribute('tabindex', '0');
-  envelope.setAttribute('role', 'button');
-  envelope.setAttribute('aria-label', 'Open envelope');
-</script>
- 
+
+</section>
+
+<script src="invitation.js"></script>
 </body>
 </html>
